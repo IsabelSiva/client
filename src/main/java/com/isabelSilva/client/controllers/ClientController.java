@@ -2,6 +2,8 @@ package com.isabelSilva.client.controllers;
 
 import com.isabelSilva.client.dto.ClientDTO;
 import com.isabelSilva.client.services.ClientService;
+import com.isabelSilva.client.services.exceptions.DatabaseException;
+import com.isabelSilva.client.services.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -9,9 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "/clients")
@@ -50,5 +50,15 @@ public class ClientController {
         return ResponseEntity.created(uri).body(dto);
     }
 
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<ClientDTO> update(@PathVariable Long id, @RequestBody ClientDTO dto) throws ResourceNotFoundException {
+        ClientDTO clientDTO = service.update(id, dto);
+        return ResponseEntity.ok().body(clientDTO);
+    }
 
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) throws ResourceNotFoundException, DatabaseException {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }
